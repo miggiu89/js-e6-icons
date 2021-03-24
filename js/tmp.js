@@ -1,3 +1,41 @@
+function stampaIcone(arr) {
+    $('.icons').empty();
+
+    arr.forEach((element) => {
+
+        const {name,prefix,family,color} = element;
+        $('.icons').append(`
+            <div class="icon">
+                <i class="${family} ${prefix}${name}" style="color:${color}"></i>
+                <div class="nome">${name}</div>
+            </div>
+        `);
+
+    });
+}
+
+function filterIcon(tipo,array){
+    if ( tipo == 'all'){
+        return array
+    }
+    return array.filter((element) => element.type == tipo);
+}
+
+
+function stampaOpzioni(arr) {
+    arr.forEach((element) => {
+
+        $('#type').append(`
+            <option value="${element}">${element}</option>
+        `);
+
+    });
+}
+// sezioni funzioni
+
+
+
+
 $(document).ready(function() {
 const icons = 
 			[
@@ -99,32 +137,44 @@ const icons =
 				}
 			];
 
-	const container = $(".icons");
-
-	print(icons, container);
-}); // chiusura document ready
-
-// Functions
-
+	// assegno la proprietà color appropriata al tipo di oggetto e popolo la select
+    const blu = '#0000ff';
+    const arancione = '#ffa500';
+    const viola = '#800080';
+    const tipiIcone = [];
 
 
+    const colori = icons.map((element) => {
 
+        const {type} = element;
+        if ( !tipiIcone.includes(type) ){
+            tipiIcone.push(type);
+        }
 
-function print(array, container) {
-	// inseriamo le icone nel container
-	container.html("");
+        console.log(tipiIcone);
+        return {
+            ...element,
+            color: type == 'animal' ? blu :
+            type == 'user' ? arancione : viola
+        };
 
-	array.forEach((item) => {
-		const {color, family, name, prefix} = item;
+    });
+    
+    // stampo nella select
+    stampaOpzioni(tipiIcone);
+    
 
-		// Template literal
-		const elementHTML = `	
-		<div>
-			<i class="${family} ${prefix}${name}"></i>
-			<div class="title">${name.toUpperCase()}</div>
-		</div>
-		`;
+    // creo all'interno di icons nell'html le varie icon colorate nel modo giusto
+    stampaIcone(colori);
 
-		container.append(elementHTML);
-	});
-}
+    // vedo a schermo solo le icon selezionate in base alla select
+    const select = $('#type');
+    select.change(function() {
+
+        const valore = $(this).val();
+        const elementiFiltrati = filterIcon(valore,colori);
+        stampaIcone(elementiFiltrati);
+
+    });
+
+});
